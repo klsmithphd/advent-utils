@@ -1,6 +1,47 @@
-(ns advent-utils.core)
+(ns advent-utils.core
+  (:require [clojure.java.io :as io]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn puzzle-input
+  "Load a puzzle input (from the resources directory in your project) as
+   a seq, with each line in the input as an element in the seq"
+  [filename]
+  (->> filename
+       io/resource
+       io/reader
+       line-seq))
+
+(defn fmap
+  "Applies the function f to the values of the map m"
+  [f m]
+  (zipmap (keys m) (map f (vals m))))
+
+(defn kmap
+  "Applies the function f to the keys of the map m"
+  [f m]
+  (zipmap (map f (keys m)) (vals m)))
+
+(defn without-keys
+  "Returns a map with only the entries in map whose key isn't in keyseq"
+  [map keyseq]
+  (select-keys map (filter (complement (set keyseq)) (keys map))))
+
+(defn rotate
+  "Rotate the collection by n"
+  [n coll]
+  (let [size (count coll)]
+    (take size (drop (mod n size) (cycle coll)))))
+
+(defn index-of
+  "Find the index position of x within coll"
+  [x coll]
+  (ffirst (filter #(= x (second %)) (map-indexed vector coll))))
+
+(defn count-if
+  "Find the count of items in coll that satisfy predicate pred"
+  [coll pred]
+  (count (filter pred coll)))
+
+(defn invert-map
+  "Swap keys and values for map m"
+  [m]
+  (zipmap (vals m) (keys m)))
