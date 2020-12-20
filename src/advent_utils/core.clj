@@ -26,13 +26,17 @@
   (select-keys map (filter (complement (set keyseq)) (keys map))))
 
 (defn rotate
-  "Rotate the collection by n"
+  "Rotate the collection by n. Positive values of n rotate to the left,
+   meaning that values are taken from the beginning of coll and moved to
+   the end.  Negative values of n rotate to the right, meaning values
+   are taken from the end of coll and moved to the front"
   [n coll]
   (let [size (count coll)]
     (take size (drop (mod n size) (cycle coll)))))
 
 (defn index-of
-  "Find the index position of x within coll"
+  "Find the index position of x within coll. Only returns the
+   first match, even when there are multiple matches"
   [x coll]
   (ffirst (filter #(= x (second %)) (map-indexed vector coll))))
 
