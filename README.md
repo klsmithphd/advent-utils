@@ -38,7 +38,7 @@ inputs where characters denote different objects.
 => (ascii/ascii->map {\. :space \# :wall} ["..#" ".#." "#..."]))
 {:width 3 :height 3 :grid {[0 0] :space [1 0] :space [2 0] :wall
                            [0 1] :space [1 1] :wall  [2 1] :wall
-                           [0 2] :wall  [1 2] :space [2 2] :wall}}
+                           [0 2] :wall  [1 2] :space [2 2] :space}}
 ```
 
 ### advent-utils.graph
