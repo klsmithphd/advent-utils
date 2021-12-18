@@ -127,10 +127,12 @@
     (map #(single-path-2 g % v stop-at) neighbors)))
 
 (defn dijkstra-update
-  [graph vertex {:keys [dist prev] :as state} neighbor]
+  [graph vertex {:keys [dist prev queue] :as state} neighbor]
   (let [alt (+ (dist vertex) (distance graph vertex neighbor))]
     (if (or (nil? (dist neighbor)) (< alt (dist neighbor)))
-      {:dist (assoc dist neighbor alt) :prev (assoc prev neighbor vertex)}
+      {:dist  (assoc dist neighbor alt)
+       :queue (assoc queue neighbor alt)
+       :prev  (assoc prev neighbor vertex)}
       state)))
 
 (defn dijkstra-retrace
@@ -144,13 +146,21 @@
   "Executes Dijkstra's algorithm to identify the shortest path between the start and finish vertices"
   [graph start finish & {:keys [limit]}]
   (let [max-search (or limit (count (vertices graph)))
-        init-state {:dist (priority-map start 0) :prev {}}]
-    (loop [visited #{} vertex start state init-state]
-      (if (or (= max-search (count visited)) (= vertex finish))
+        init-state {:dist {start 0} :prev {} :queue (priority-map start 0)}]
+    (loop [visited #{}
+           visited-count 1
+           vertex start
+           state init-state]
+      (if (or (= max-search visited-count) (= vertex finish))
         (reverse (dijkstra-retrace (state :prev) finish))
-        (let [neighbors (filter (complement visited) (edges graph vertex))
-              new-state (reduce (partial dijkstra-update graph vertex) state neighbors)]
-          (recur (conj visited vertex) (ffirst (entries-not-in-set visited (state :dist))) new-state))))))
+        (let [neighbors (remove visited (edges graph vertex))
+              new-state (-> (reduce (partial dijkstra-update graph vertex) state neighbors)
+                            (update :queue dissoc vertex))]
+          (recur
+           (conj visited vertex)
+           (if (visited vertex) visited-count (inc visited-count))
+           (ffirst (:queue new-state))
+           new-state))))))
 
 (defn shortest-distance
   [graph start finish]
