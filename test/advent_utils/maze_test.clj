@@ -11,7 +11,7 @@
 
 (deftest grid-of-test
   (testing "Indexes a list of lists with coordinates"
-    (is (= {[0 0] :a [1 0] :b [0 1] :c [1 1] :d}
+    (is (= {:width 2 :height 2 :grid {[0 0] :a [1 0] :b [0 1] :c [1 1] :d}}
            (m/grid-of [[:a :b] [:c :d]])))))
 
 (deftest adj-coords-test

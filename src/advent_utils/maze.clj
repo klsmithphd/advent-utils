@@ -20,10 +20,14 @@
 (defn grid-of
   "Index a 2D list-of-list-of-values with coordinates starting at [0 0]"
   [values]
-  (let [coords (for [y (range (count values))
-                     x (range (count (first values)))]
+  (let [width  (count (first values))
+        height (count values)
+        coords (for [y (range height)
+                     x (range width)]
                  [x y])]
-    (zipmap coords (flatten values))))
+    {:width width
+     :height height
+     :grid (zipmap coords (flatten values))}))
 
 (defn adj-coords
   "Coordinates of adjacent points. If include-diagonals is not set or false, 
