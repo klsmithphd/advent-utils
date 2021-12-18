@@ -8,7 +8,7 @@ A Clojure library of helper utilities for solving
 Add the following to your Leiningen `:dependencies`
 
 ```clojure
-[advent-utils "0.1.1"]
+[advent-utils "0.1.2"]
 ```
 
 ### advent-utils.core
