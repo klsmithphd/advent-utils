@@ -17,10 +17,27 @@
   [direction turn]
   ((relative-directions direction) turn))
 
+(defn grid-of
+  "Index a 2D list-of-list-of-values with coordinates starting at [0 0]"
+  [values]
+  (let [coords (for [y (range (count values))
+                     x (range (count (first values)))]
+                 [x y])]
+    (zipmap coords (flatten values))))
+
 (defn adj-coords
-  "Coordinates of four adjacent points, always in the order N W S E"
-  [[x y]]
-  [[x (dec y)] [(dec x) y] [x (inc y)] [(inc x) y]])
+  "Coordinates of adjacent points. If include-diagonals is not set or false, 
+   returns the four adjacent points, always in the order N W S E. Returns
+   the eight adjacent coordinates if include-diagonals is set to true"
+  [[x y] & {:keys [include-diagonals]}]
+  (if include-diagonals
+    ;; including diagonals
+    (->> (for [ny (range (dec y) (+ y 2))
+               nx (range (dec x) (+ x 2))]
+           [nx ny])
+         (filter #(not= [x y] %)))
+    ;; only directly adjacent
+    [[x (dec y)] [(dec x) y] [x (inc y)] [(inc x) y]]))
 
 (defn one-step
   "The position one step away from pos in the cardinal direction"
@@ -28,7 +45,7 @@
   ((adj-coords pos) (u/index-of direction cardinal-dirs)))
 
 (defn neighbors
-  "The "
+  "Map of the positions and values of the nearest (non-diagonal) neighbors to pos"
   [maze pos]
   (let [coords (adj-coords pos)
         vals (map maze coords)]
