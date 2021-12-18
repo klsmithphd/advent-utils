@@ -1,4 +1,4 @@
-(defproject advent-utils "0.1.2"
+(defproject advent-utils "0.1.3-SNAPSHOT"
   :description "Helper utilities supporting Advent of Code solutions"
   :url "https://github.com/Ken-2scientists/advent-utils"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
