@@ -16,13 +16,70 @@ The `core` namespace contains the main helper functions for loading the
 puzzle inputs (saved as files) plus a variety of small utility functions
 that tend to be needed across multiple puzzles
 
+#### Managing puzzle inputs
 ```clojure
 (ns foo
   (:require [advent-utils.core :as u]))
 
-; Save your puzzle input to the `resources` directory of your project
-; Returns a seq, with an element for each row in the input file
+; Save your puzzle input to the `resources` directory of your project and then
+; `puzzle-input` will return a seq, with an element for each row in the input file
 => (def day01-input (u/puzzle-input "day01-input.txt"))
+
+; Sometimes puzzle inputs will consist of multiple "chunks", with each chunk
+; separated by a blank line. For those cases, use `split-at-blankline`
+=> (u/split-at-blankline ["Chunk 1"
+                          "Some values"
+                          ""
+                          "Chunk 2"
+                          "Some other values"])
+[["Chunk 1" "Some values"]
+ ["Chunk 2" "Some other values"]]
+```
+
+
+#### Helper/utility functions
+```clojure
+; Apply a function to the values of a map
+=> (u/fmap inc {:a 1 :b 2 :c 3})
+{:a 2 :b 3 :c 4}
+
+; ...or the keys of a map
+=> (u/kmap inc {0 :a 1 :b 2 :c})
+{1 :a 2 :b 3 :c}
+
+; Return a map with certain keys excluded
+=> (u/without-keys {:a 1 :b 2 :c 3 :d 4} [:a :d])
+{:b 2 :c 3}
+
+; Swap the keys/vals of a map, for a 1:1 mapping
+=> (u/invert-map {:a 0 :b 1 :c 2})
+{0 :a 1 :b 2 :c}
+
+; Rotate the elements of a collection, keeping the same size.
+; Positive shifts rotate "left". Negative shifts rotate "right"
+=> (u/rotate 1 '(0 1 2 3 4))
+(1 2 3 4 0)
+=> (u/rotate -1 '(0 1 2 3 4))
+(4 0 1 2 3)
+
+; Find the position in a collection of the first occurrence of x
+=> (u/index-of 8 [1 2 4 8 16])
+3
+
+; Count the elements of a collection that satisfy a predicate
+=> (u/count-if (range 10) odd?)
+5
+
+; Convert an int value into a binary string representation of 0s and 1s
+=> (u/int->bitstr 2147483647)
+"1111111111111111111111111111111"
+=> (u/int->bitstr 9223372036854775808N)
+"1000000000000000000000000000000000000000000000000000000000000000"
+
+; And convert the binary string representation back to a value
+=> (u/bitstr->int "11011")
+27
+
 ```
 
 ### advent-utils.ascii
@@ -69,7 +126,7 @@ The `maze` namespace has functions that help with path-finding in a maze.
 
 ## License
 
-Copyright © 2020 Ken Smith
+Copyright © 2022 Ken Smith
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at

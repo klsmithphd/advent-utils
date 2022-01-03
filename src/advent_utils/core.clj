@@ -1,5 +1,6 @@
 (ns advent-utils.core
-  (:require [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str]))
 
 (defn puzzle-input
   "Load a puzzle input (from the resources directory in your project) as
@@ -9,6 +10,14 @@
        io/resource
        io/reader
        line-seq))
+
+(defn split-at-blankline
+  "Splits a seq of lines (e.g. produced by `puzzle-input`) into
+   a collection of chunks, each chunk with a seq of lines"
+  [input]
+  (let [chunks (-> (str/join "\n" input)
+                   (str/split #"\n\n"))]
+    (map #(str/split % #"\n") chunks)))
 
 (defn fmap
   "Applies the function f to the values of the map m"
@@ -25,6 +34,12 @@
   [map keyseq]
   (select-keys map (filter (complement (set keyseq)) (keys map))))
 
+(defn invert-map
+  "Swap keys and values for map m. Unlikely to do what you want if there
+   isn't a 1-1 mapping"
+  [m]
+  (zipmap (vals m) (keys m)))
+
 (defn rotate
   "Rotate the collection by n. Positive values of n rotate to the left,
    meaning that values are taken from the beginning of coll and moved to
@@ -36,7 +51,8 @@
 
 (defn index-of
   "Find the index position of x within coll. Only returns the
-   first match, even when there are multiple matches"
+   first match, even when there are multiple matches. Returns nil
+   if x is not found"
   [x coll]
   (ffirst (filter #(= x (second %)) (map-indexed vector coll))))
 
@@ -45,7 +61,13 @@
   [coll pred]
   (count (filter pred coll)))
 
-(defn invert-map
-  "Swap keys and values for map m"
-  [m]
-  (zipmap (vals m) (keys m)))
+(defn bitstr->int
+  "Converts a bit string (e.g. '1101') to the corresponding integer (may be a long or bigint)"
+  [s]
+  (->> s (str "2r") read-string))
+
+(defn int->bitstr
+  "Converts any integer (or long or bigint) to a bit string"
+  [x]
+  (let [bi (biginteger x)]
+    (.toString bi 2)))
