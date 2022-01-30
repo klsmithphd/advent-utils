@@ -33,15 +33,11 @@
 
 (defn ascii->MapGrid2D
   "Convert an ASCII represention of a 2D grid into
-   a Grid2D.
+   a MapGrid2D.
    
    charmap is a map where the keys are ASCII chars and
    the values are expected to be symbols to use in
-   your application. Ex.: (def codes {\\. :space \\# :wall})
-   
-   Output will be a MapGrid2D with keys width, height, and grid.
-   grid will be a map where the keys are [x y] positions
-   and values will be the symbols defined in charmap"
+   your application. Ex.: (def codes {\\. :space \\# :wall})"
   [charmap lines]
   (let [height  (count lines)
         width   (count (first lines))

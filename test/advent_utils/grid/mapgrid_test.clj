@@ -7,7 +7,7 @@
   (->MapGrid2D 3 2 {[0 0] 1 [1 0] 2 [2 0] 3
                     [0 1] 4 [1 1] 5 [2 1] 6}))
 
-(deftest Grid2D-test
+(deftest MapGrid2D-test
   (testing "Satisifies the Grid2D protocol"
     (is (= 3 (width sample)))
     (is (= 2 (height sample)))

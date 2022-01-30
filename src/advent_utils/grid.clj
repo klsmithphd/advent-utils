@@ -26,15 +26,6 @@
   (neighbors-4 [this pos] "A map of the positions and values of the four nearest (von Neumann) neighbors of position pos")
   (neighbors-8 [this [x y]] "A map of the positions and values of the eight nearest (Moore) neighbors, including diagonals, of position pos"))
 
-;; An alternative implementation of Grid2D backed by vectors 
-;; (defrecord VectorGrid2D [v]
-;;   Grid2D
-;;   (width [_] (count (first v)))
-;;   (height [_] (count v))
-;;   (value [_ [x y]] (get-in v [y x]))
-;;   (neighbors-4 [_ pos] (map #(get-in v (-> % reverse vec)) (adj-coords-2d pos)))
-;;   (neighbors-8 [_ pos] (map #(get-in v (-> % reverse vec)) (adj-coords-2d pos :include-diagonals true))))
-
 (defn Grid2D->ascii
   "Convert a Grid2D into an ASCII-art string representation.
    
