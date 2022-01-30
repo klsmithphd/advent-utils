@@ -24,6 +24,37 @@
                                  :e {:b 15 :d 11 :f 6}
                                  :f {:c 9 :e 6}}))
 
+(def t4 (mg/edgemap->MapDiGraph {:a {:j 3}
+                                 :b {:j 2}
+                                 :c {:j 4}
+                                 :d {:j 6}
+                                 :j {:a 3 :b 2 :c 4 :d 6}
+                                 :k {}}))
+
+(def t5 (mg/edgemap->MapDiGraph {:a {:b 1 :c 1}
+                                 :b {:d 1}
+                                 :c {:d 1}
+                                 :d {:e 1}}))
+
+(deftest degree-test
+  (testing "Computes the outdegree for various nodes"
+    (is (= 2 (g/outdegree t1 :b)))
+    (is (= 4 (g/outdegree t3 :d)))
+    (is (= 4 (g/outdegree t4 :j)))
+    (is (= 0 (g/outdegree t4 :k)))))
+
+(deftest sink-source-test
+  (testing "Determines whether a node is a sink or a source"
+    (is (= true  (g/sink? t4 :k)))
+    (is (= true  (g/source? t4 :k)))
+    (is (= false (g/sink? t5 :a)))
+    (is (= true  (g/source? t5 :a)))
+    (is (= false (g/source? t5 :b)))
+    (is (= false (g/source? t5 :c)))
+    (is (= false (g/source? t5 :d)))
+    (is (= false (g/source? t5 :e)))
+    (is (= true  (g/sink? t5 :e)))))
+
 (deftest single-path-test
   (testing "Can traverse a graph until its end or a junction is reached"
     (is (= [:a :b :c :d :e] (g/single-path t1 :a)))

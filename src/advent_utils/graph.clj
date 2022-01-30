@@ -3,8 +3,10 @@
             [advent-utils.core :as u]))
 
 (defprotocol Graph
+  (directed? [this] "Whether this graph is directed")
   (vertices [this] "A collection of all the vertices in the graph")
   (vertex [this v] "Any data/information/label associated with the given vertex in the graph")
+  (indegree [this v] "The number of incident edges to this vertex in the graph")
   (edges [this v] "A collection of the edges for the given vertex in the graph")
   (distance [this v1 v2] "The distance (or edge weight) between two vertices")
   (without-vertex [this v] "Produces a new graph with the vertex removed")
@@ -15,10 +17,25 @@
   [g v]
   (count (edges g v)))
 
+(defn source?
+  "Whether a vertex is a source vertex (a vertex with no incoming edges)"
+  [g v]
+  (zero? (indegree g v)))
+
+(defn sink?
+  "Whether a vertex is a sink vertex (a vertex with no outgoing edges)"
+  [g v]
+  (zero? (outdegree g v)))
+
+(defn isolated?
+  "Whether a vertex is isolated (has degree of zero)"
+  [g v]
+  (and (source? g v) (sink? g v)))
+
 (defn leaf?
   "Whether a vertex is a leaf vertex (meaning that it has at most one edge)"
   [g v]
-  (= 1 (outdegree g v)))
+  (= 1 (indegree g v)))
 
 (defn junction?
   "Whether a vertex is a junction (meaning that it has more than two edges)"

@@ -1,7 +1,7 @@
 (ns advent-utils.graph.map-digraph-test
   (:require [clojure.test :refer [deftest testing is]]
             [advent-utils.graph :as g :refer
-             [vertices vertex edges distance without-vertex rewired-without-vertex]]
+             [vertices vertex indegree edges distance without-vertex rewired-without-vertex]]
             [advent-utils.graph.map-digraph :as mg :refer [->MapDiGraph]]))
 
 (def t1 (mg/edgemap->MapDiGraph {:a {:b 1}
@@ -48,6 +48,14 @@
 (deftest vertex-test
   (testing "Returns data about a vertex"
     (is (= "A" (vertex t5 :a)))))
+
+(deftest indegree-test
+  (testing "Calculates the indegree of a vertex"
+    (is (= 2 (indegree t1 :b)))
+    (is (= 1 (indegree t1 :a)))
+    (is (= 4 (indegree t3 :d)))
+    (is (= 4 (indegree t4 :j)))
+    (is (= 0 (indegree t4 :k)))))
 
 (deftest edges-test
   (testing "Returns the edges associated with a given vertex"

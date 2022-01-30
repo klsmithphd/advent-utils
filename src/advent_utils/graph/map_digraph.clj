@@ -4,6 +4,10 @@
 
 (defrecord MapDiGraph [vs es]
   Graph
+  (directed?
+    [_]
+    true)
+
   (vertices
     [_]
     (keys vs))
@@ -11,6 +15,10 @@
   (vertex
     [_ v]
     (get vs v))
+
+  (indegree
+    [_ v]
+    (or (->> (vals es) (mapcat keys) frequencies v) 0))
 
   (edges
     [_ v]
