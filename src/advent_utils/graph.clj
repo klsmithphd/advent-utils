@@ -1,85 +1,46 @@
 (ns advent-utils.graph
   (:require [clojure.data.priority-map :refer [priority-map]]
-            [clojure.math.combinatorics :as combo]
             [advent-utils.core :as u]))
 
 (defprotocol Graph
+  (directed? [this] "Whether this graph is directed")
   (vertices [this] "A collection of all the vertices in the graph")
   (vertex [this v] "Any data/information/label associated with the given vertex in the graph")
+  (indegree [this v] "The number of incident edges to this vertex in the graph")
   (edges [this v] "A collection of the edges for the given vertex in the graph")
   (distance [this v1 v2] "The distance (or edge weight) between two vertices")
   (without-vertex [this v] "Produces a new graph with the vertex removed")
   (rewired-without-vertex [this v] "Produces a new graph, re-wired to preserve the transitive edges through the removed vertex"))
 
-(defrecord MapGraph [graph]
-  Graph
-  (vertices
-    [_]
-    (keys graph))
-
-  (edges
-    [_ v]
-    (keys (graph v)))
-
-  (distance
-    [_ v1 v2]
-    (get-in graph [v1 v2]))
-
-  (without-vertex
-    [g v]
-    (let [neighbors (edges g v)
-          newgraph (-> (reduce #(update %1 %2 dissoc v) graph neighbors)
-                       (dissoc v))]
-      (assoc g :graph newgraph)))
-
-  (rewired-without-vertex
-    [g v]
-    (let [neighbors (edges g v)
-          all-pairs (combo/permuted-combinations neighbors 2)
-          newedge-fn (fn [g [v1 v2]]
-                       (update-in g [:graph v1] assoc v2 (+ (distance g v1 v)
-                                                            (distance g v v2))))]
-      (without-vertex (reduce newedge-fn g all-pairs) v))))
-
-(defrecord LabeledMapGraph [graph]
-  Graph
-  (vertices
-    [_]
-    (keys graph))
-
-  (vertex
-    [_ v]
-    (graph v))
-
-  (edges
-    [_ v]
-    (keys (:edges (graph v))))
-
-  (distance
-    [_ v1 v2]
-    (get-in graph [:edges v1 v2]))
-
-  (without-vertex
-    [_ v]
-    (let [neighbors (keys (:edges graph v))
-          newgraph (-> (reduce #(update-in %1 [:edges %2] dissoc v) graph neighbors)
-                       (dissoc v))]
-      (->LabeledMapGraph newgraph))))
-
-(defn degree
-  "The degree of a vertex is the number of edges it has"
+(defn outdegree
+  "The outdegree of a vertex is the number of outgoing edges it has"
   [g v]
   (count (edges g v)))
+
+(defn source?
+  "Whether a vertex is a source vertex (a vertex with no incoming edges)"
+  [g v]
+  (zero? (indegree g v)))
+
+(defn sink?
+  "Whether a vertex is a sink vertex (a vertex with no outgoing edges)"
+  [g v]
+  (zero? (outdegree g v)))
+
+(defn isolated?
+  "Whether a vertex is isolated (has degree of zero)"
+  [g v]
+  (and (source? g v) (sink? g v)))
 
 (defn leaf?
   "Whether a vertex is a leaf vertex (meaning that it has at most one edge)"
   [g v]
-  (= 1 (degree g v)))
+  (= 1 (indegree g v)))
 
 (defn junction?
   "Whether a vertex is a junction (meaning that it has more than two edges)"
   [g v]
-  (> (degree g v) 2))
+  (> (outdegree g v) 2))
 
 (defn path-distance
   "Computes the distance along a path (an ordered collection of vertices)"
