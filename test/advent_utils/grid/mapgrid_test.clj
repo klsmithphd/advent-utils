@@ -1,7 +1,7 @@
-(ns advent-utils.mapgrid-test
+(ns advent-utils.grid.mapgrid-test
   (:require [clojure.test :refer [deftest testing is]]
             [advent-utils.grid :refer [width height value slice neighbors-4 neighbors-8]]
-            [advent-utils.mapgrid :as mg :refer [->MapGrid2D]]))
+            [advent-utils.grid.mapgrid :as mg :refer [->MapGrid2D]]))
 
 (def sample
   (->MapGrid2D 3 2 {[0 0] 1 [1 0] 2 [2 0] 3

@@ -1,4 +1,4 @@
-(ns advent-utils.mapgrid
+(ns advent-utils.grid.mapgrid
   (:require [advent-utils.grid :as grid :refer [Grid2D]]))
 
 (defrecord MapGrid2D [width height grid]
