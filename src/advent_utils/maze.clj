@@ -1,5 +1,6 @@
 (ns advent-utils.maze
-  (:require [advent-utils.graph :as graph :refer [Graph ->MapGraph]]
+  (:require [advent-utils.graph :as graph :refer [Graph]]
+            [advent-utils.graph.mapgraph :as mg]
             [advent-utils.grid :as grid]
             [advent-utils.core :as u]))
 
@@ -75,7 +76,7 @@
 
 (defn Maze->Graph
   [maze]
-  (->MapGraph (graph/adjacencies maze)))
+  (mg/edgemap->MapGraph (graph/adjacencies maze)))
 
 (defn spread-to-adjacent
   [maze [x y]]
