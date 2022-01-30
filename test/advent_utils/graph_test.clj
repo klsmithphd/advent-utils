@@ -80,6 +80,11 @@
     (is (= false (g/source? t5 :e)))
     (is (= true  (g/sink? t5 :e)))))
 
+(deftest isolated-test
+  (testing "Determines whether a node is isolated"
+    (is (= true (g/isolated? t4 :k)))
+    (is (= false (g/isolated? t4 :a)))))
+
 (deftest single-path-test
   (testing "Can traverse a graph until its end or a junction is reached"
     (is (= [:a :b :c :d :e] (g/single-path t1 :a)))
