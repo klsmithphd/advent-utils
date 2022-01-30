@@ -22,8 +22,9 @@
   (width [this] "The total width of the grid (number of cells in the horizontal direction)")
   (height [this] "The total height of the grid (number of cells in the vertical direction)")
   (value [this pos] "The value of the grid at position pos")
-  (neighbors-4 [this pos] "The values of the four nearest (von Neumann) neighbors of position pos")
-  (neighbors-8 [this [x y]] "The values of the eight nearest (Moore) neighbors, including diagonals, of position pos"))
+  (slice [this dim idx] "A slice of the grid along dim (:row or :col) at index idx")
+  (neighbors-4 [this pos] "A map of the positions and values of the four nearest (von Neumann) neighbors of position pos")
+  (neighbors-8 [this [x y]] "A map of the positions and values of the eight nearest (Moore) neighbors, including diagonals, of position pos"))
 
 ;; An alternative implementation of Grid2D backed by vectors 
 ;; (defrecord VectorGrid2D [v]

@@ -6,8 +6,20 @@
   (width [_] width)
   (height [_] height)
   (value [_ pos] (get grid pos))
-  (neighbors-4 [_ pos] (map (partial get grid) (grid/adj-coords-2d pos)))
-  (neighbors-8 [_ pos] (map (partial get grid) (grid/adj-coords-2d pos :include-diagonals true))))
+  (slice
+    [_ dim idx]
+    (let [coord (case dim :col first  :row second)
+          w     (case dim :col 1      :row width)
+          h     (case dim :col height :row 1)]
+      (->MapGrid2D w h (into (sorted-map) (filter #(= idx (-> % key coord)) grid)))))
+  (neighbors-4
+    [_ pos]
+    (let [locs (grid/adj-coords-2d pos)]
+      (zipmap locs (map (partial get grid) locs))))
+  (neighbors-8
+    [_ pos]
+    (let [locs (grid/adj-coords-2d pos :include-diagonals true)]
+      (zipmap locs (map (partial get grid) locs)))))
 
 (defn lists->MapGrid2D
   "Index a 2D list-of-list-of-values with coordinates starting at [0 0]"
