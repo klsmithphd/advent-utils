@@ -8,7 +8,7 @@ A Clojure library of helper utilities for solving
 Add the following to your Leiningen `:dependencies`
 
 ```clojure
-[advent-utils "0.1.3"]
+[advent-utils "0.1.4"]
 ```
 
 ### advent-utils.core
@@ -68,6 +68,14 @@ puzzle inputs (saved as files) plus a variety of small utility functions
 ; Count the elements of a collection that satisfy a predicate
 => (u/count-if (range 10) odd?)
 5
+```
+
+### advent-utils.binary
+The `binary` namespace contains the helper functions for converting to-and-from binary repesentations of numbers
+
+```clojure
+(ns foo
+  (:require [advent-utils.binary :as b]))
 
 ; Convert an int value into a binary string representation of 0s and 1s
 => (u/int->bitstr 2147483647)
@@ -78,20 +86,6 @@ puzzle inputs (saved as files) plus a variety of small utility functions
 ; And convert the binary string representation back to a value
 => (u/bitstr->int "11011")
 27
-```
-
-### advent-utils.binary
-The `binary` namespace contains the helper functions for converting to-and-from binary repesentations of numbers
-
-```clojure
-(ns foo
-  (:require [advent-utils.binary :as b]))
-
-=> (b/bitstr->int "11011")
-27
-
-=> (b/int->bitstr 2147483647)
-"1111111111111111111111111111111"
 ```
 
 ### advent-utils.digest
@@ -115,21 +109,67 @@ Dijkstra's algorithm.
   (:require [advent-utils.graph :as graph]))
 ```
 
+TODO: Add more documentation
+
 ### advent-utils.grid
 The `grid` namespace has helpers for dealing with values on a regular
 2D grid of values, i.e. where there are values/objects at given `[x y]`
-coordinates.
+coordinates. 
+
+The namespace defines a protocol `Grid2D`, for which there
+are two implementations. 
+
+* `MapGrid2D` uses a map as its underlying
+data structure, with the `[x y]` positions as keys. This implementation
+is particularly useful if the grid size does not remain static
+
+* `VecGrid2D` uses a vector of vectors as its underlying structure.
 
 ```clojure
 (ns foo
-  (:require [advent-utils.grid :as grid]))
+  (:require [advent-utils.grid :as grid :refer [width height value neighbors-4 neighbors-8]]
+            [advent-utils.grid.mapgrid :as mg]
+            [advent-utils.grid.vecgrid :as vg]))
 
-; ascii->map converts ASCII-art grids into a data structure
+; Compute the adjacent coordinates for a given position
+=> (grid/adj-coords-2d [0 0])
+[[0 -1] [-1 0] [0 1] [1 0]]
+
+; Can specify :include-diagonals true to get the 8 adjacent coordinates
+=> (grid/adj-coords-2d [0 0] :include-diagonals true)
+[[-1 -1] [0 -1] [1 -1] [-1  0] [1  0] [-1  1] [0  1] [1  1]]
+            
+; ascii->MapGrid2D converts ASCII-art grids into a data structure
 ; The keys of `:grid` are [x y] positions, indexed from the upper-left corner
-=> (ascii/ascii->map {\. :space \# :wall} ["..#" ".#." "#..."]))
-{:width 3 :height 3 :grid {[0 0] :space [1 0] :space [2 0] :wall
-                           [0 1] :space [1 1] :wall  [2 1] :wall
-                           [0 2] :wall  [1 2] :space [2 2] :space}}
+=> (mg/ascii->MapGrid2D {\. :space \# :wall} ["..#" ".#." "#.."]))
+#MapGrid2D{:width 3 :height 3 :grid {[0 0] :space [1 0] :space [2 0] :wall
+                                     [0 1] :space [1 1] :wall  [2 1] :wall
+                                     [0 2] :wall  [1 2] :space [2 2] :space}}
+
+; Alternatively, ascii->VecGrid2D converts the same ASCII grids into the
+; VecGrid2D structure
+=> (def foo (vg/ascii->VecGrid2D {\. :space \# :wall} ["..#" ".#." "#.."])
+#VecGrid2D{:v [[:space :space :wall] 
+               [:space :wall :space] 
+               [:wall :space :space]]}
+
+; Either implementation supports all the functions defined in the `Grid2D` protocol
+=> (width foo)
+3
+
+=> (height foo)
+3
+
+=> (value foo [1 0])
+:space
+
+=> (neighbors-4 foo [1 1])
+{[1 0] :space, [0 1] :space, [1 2] :space, [2 1] :space}
+
+=> (neighbors-8 foo [1 1])
+{[0 0] :space [1 0] :space [2 0] :wall 
+ [0 1] :space              [2 1] :space
+ [0 2] :wall  [1 2] :space [2 2] :space}
 ```
 
 ### advent-utils.math
@@ -140,6 +180,8 @@ The `math` namespace contains helper functions, especially for modular arithmeti
   (:require [advent-utils.math :as math]))
 ```
 
+TODO: Add more documentation
+
 ### advent-utils.maze
 The `maze` namespace has functions that help with path-finding in a maze.
 
@@ -147,6 +189,8 @@ The `maze` namespace has functions that help with path-finding in a maze.
 (ns foo
   (:require [advent-utils.math :as math]))
 ```
+
+TODO: Add more documentation
 
 ## License
 
