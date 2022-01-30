@@ -80,10 +80,23 @@ puzzle inputs (saved as files) plus a variety of small utility functions
 27
 ```
 
+### advent-utils.binary
+The `binary` namespace contains the helper functions for converting to-and-from binary repesentations of numbers
+
+```clojure
+(ns foo
+  (:require [advent-utils.binary :as b]))
+
+=> (b/bitstr->int "11011")
+27
+
+=> (b/int->bitstr 2147483647)
+"1111111111111111111111111111111"
+```
+
 ### advent-utils.digest
 The `digest` namespace contains the helper functions for working with message digests (e.g. MD5)
 
-#### Managing puzzle inputs
 ```clojure
 (ns foo
   (:require [advent-utils.digest :as d]))
