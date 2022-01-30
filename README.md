@@ -14,7 +14,7 @@ Add the following to your Leiningen `:dependencies`
 ### advent-utils.core
 The `core` namespace contains the main helper functions for loading the
 puzzle inputs (saved as files) plus a variety of small utility functions
-that tend to be needed across multiple puzzles
+ that tend to be needed across multiple puzzles
 
 #### Managing puzzle inputs
 ```clojure
@@ -35,7 +35,6 @@ that tend to be needed across multiple puzzles
 [["Chunk 1" "Some values"]
  ["Chunk 2" "Some other values"]]
 ```
-
 
 #### Helper/utility functions
 ```clojure
@@ -79,23 +78,18 @@ that tend to be needed across multiple puzzles
 ; And convert the binary string representation back to a value
 => (u/bitstr->int "11011")
 27
-
 ```
 
-### advent-utils.ascii
-The `ascii` namespace has a couple of helpers for dealing with 2D grid
-inputs where characters denote different objects.
+### advent-utils.digest
+The `digest` namespace contains the helper functions for working with message digests (e.g. MD5)
 
+#### Managing puzzle inputs
 ```clojure
 (ns foo
-  (:require [advent-utils.ascii :as ascii]))
+  (:require [advent-utils.digest :as d]))
 
-; ascii->map converts ASCII-art grids into a data structure
-; The keys of `:grid` are [x y] positions, indexed from the upper-left corner
-=> (ascii/ascii->map {\. :space \# :wall} ["..#" ".#." "#..."]))
-{:width 3 :height 3 :grid {[0 0] :space [1 0] :space [2 0] :wall
-                           [0 1] :space [1 1] :wall  [2 1] :wall
-                           [0 2] :wall  [1 2] :space [2 2] :space}}
+=> (d/md5-str "hello")
+"5d41402abc4b2a76b9719d911017c592"
 ```
 
 ### advent-utils.graph
@@ -105,7 +99,24 @@ Dijkstra's algorithm.
 
 ```clojure
 (ns foo
-  (:require [advent-utils.graph :as g]))
+  (:require [advent-utils.graph :as graph]))
+```
+
+### advent-utils.grid
+The `grid` namespace has helpers for dealing with values on a regular
+2D grid of values, i.e. where there are values/objects at given `[x y]`
+coordinates.
+
+```clojure
+(ns foo
+  (:require [advent-utils.grid :as grid]))
+
+; ascii->map converts ASCII-art grids into a data structure
+; The keys of `:grid` are [x y] positions, indexed from the upper-left corner
+=> (ascii/ascii->map {\. :space \# :wall} ["..#" ".#." "#..."]))
+{:width 3 :height 3 :grid {[0 0] :space [1 0] :space [2 0] :wall
+                           [0 1] :space [1 1] :wall  [2 1] :wall
+                           [0 2] :wall  [1 2] :space [2 2] :space}}
 ```
 
 ### advent-utils.math
