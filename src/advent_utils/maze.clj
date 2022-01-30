@@ -1,5 +1,6 @@
 (ns advent-utils.maze
-  (:require [advent-utils.graph :as g :refer [Graph ->MapGraph]]
+  (:require [advent-utils.graph :as graph :refer [Graph ->MapGraph]]
+            [advent-utils.grid :as grid]
             [advent-utils.core :as u]))
 
 (def relative-dirs [:forward :left :backward :right])
@@ -17,47 +18,21 @@
   [direction turn]
   ((relative-directions direction) turn))
 
-(defn grid-of
-  "Index a 2D list-of-list-of-values with coordinates starting at [0 0]"
-  [values]
-  (let [width  (count (first values))
-        height (count values)
-        coords (for [y (range height)
-                     x (range width)]
-                 [x y])]
-    {:width width
-     :height height
-     :grid (zipmap coords (flatten values))}))
-
-(defn adj-coords
-  "Coordinates of adjacent points. If include-diagonals is not set or false, 
-   returns the four adjacent points, always in the order N W S E. Returns
-   the eight adjacent coordinates if include-diagonals is set to true"
-  [[x y] & {:keys [include-diagonals]}]
-  (if include-diagonals
-    ;; including diagonals
-    (->> (for [ny (range (dec y) (+ y 2))
-               nx (range (dec x) (+ x 2))]
-           [nx ny])
-         (filter #(not= [x y] %)))
-    ;; only directly adjacent
-    [[x (dec y)] [(dec x) y] [x (inc y)] [(inc x) y]]))
-
 (defn one-step
   "The position one step away from pos in the cardinal direction"
   [pos direction]
-  ((adj-coords pos) (u/index-of direction cardinal-dirs)))
+  ((grid/adj-coords-2d pos) (u/index-of direction cardinal-dirs)))
 
 (defn neighbors
   "Map of the positions and values of the nearest (non-diagonal) neighbors to pos"
   [maze pos]
-  (let [coords (adj-coords pos)
+  (let [coords (grid/adj-coords-2d pos)
         vals (map maze coords)]
     (zipmap coords vals)))
 
 (defn relative-neighbors
   [maze pos direction]
-  (let [neighbor-vals (mapv maze (adj-coords pos))]
+  (let [neighbor-vals (mapv maze (grid/adj-coords-2d pos))]
     (zipmap relative-dirs (u/rotate (u/index-of direction cardinal-dirs) neighbor-vals))))
 
 (defn follow-left-wall
@@ -100,7 +75,7 @@
 
 (defn Maze->Graph
   [maze]
-  (->MapGraph (g/adjacencies maze)))
+  (->MapGraph (graph/adjacencies maze)))
 
 (defn spread-to-adjacent
   [maze [x y]]
